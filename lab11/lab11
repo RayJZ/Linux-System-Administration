@@ -1,0 +1,28 @@
+installed chrony and timedatectl
+"enable"d them on all machines
+edited /etc/chrony.conf on machine A with
+
+driftfile /var/lib/chrony/drift
+server time-a-wwv.nist.gov iburst
+server time-a-b.nist.gov iburst
+local stratum 2
+manual
+allow 10.21.32.0/24
+allow 100.64.11.0/24
+
+then updated dhcpd.conf with machinea as the default ntp server. and localized nameservers for lan and dmz.
+reboot
+
+installed nfs on server and client.
+
+/etc/exports on server:
+
+/home/accounting/www 100.64.11.2(rw,sync,root_squash,no_all_squash) 11.64.11.3(rw,sync,root_squash,no_all_squash) 100.64.11.4(rw,sync,root_squash,no_all_squash) 100.64.11.6(rw,sync,root_squash,no_all_squash)
+
+gave the server's accoounting/www folder 'chown 33:accounting' (33 being the uid of www-data on machine c)
+chmod 2770 both folders
+
+sudo mount -r -o soft machinee.dundermifflin.com:/home/accounting/www /var/www/html/dundermifflin/accounting
+check mount status with 'mount'
+
+this took about 3 hours.

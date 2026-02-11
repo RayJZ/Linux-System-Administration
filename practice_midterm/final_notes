@@ -1,0 +1,32 @@
+Boot all six machines to the multi-user login prompt. [20 pts]
+
+
+Create a user with you identikey login as user name and private group name on every machine.
+The shell must be /bin/bash.
+Allow this user to run commands using sudo by adding the user to the wheel or sudo group.
+Choose any password you like.  [20]
+
+useradd -s /bin/bash -m oldo5582 -p "oldo5582" --user-group
+usermod -aG wheel oldo5582
+
+add to /etc/sudoers:
+oldo5582 ALL=(ALL)      ALL
+
+Ensure that all six machines can ping 8.8.8.8.  [15 pts]
+
+
+Ensure that you can ssh to all machines from Machine A.
+For all machines except Machine E also ensure that you can ssh from the VPN.  [15 pts]
+
+
+Ensure that
+dig @100.64.N.2 www.dundermifflin.com
+resolves correctly. [15 pts]
+
+
+Ensure that
+curl --resolv www.dundermifflin.com:80:100.64.N.3 http://www.dundermifflin.com/index.html
+returns the dundermifflin index page. [15 pts]
+
+
+At the end of the exam, shut down all six machines.  I will power them back up for grading.

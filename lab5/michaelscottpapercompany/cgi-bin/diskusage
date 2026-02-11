@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<h1>Disk Usage</h1>
+<table style="border-collapse: collapse;" border="1">
+    <tbody>
+    <tr>
+        <th>Site</th>
+        <th>Files</th>
+        <th>Size</th>
+    </tr>
+    <tr>
+        <td>dundermifflin.com</td>
+        <td align="right">294</td>
+        <td align="right">4.3M</td>
+    </tr>
+    <tr>
+        <td>michaelscottpapercompany.com</td>
+        <td align="right">287</td>
+        <td align="right">4.3M</td>
+    </tr>
+    <tr>
+        <td>schrutefarms.com</td>
+        <td align="right">6</td>
+        <td align="right">84K</td>
+    </tr>
+    </tbody>
+</table>

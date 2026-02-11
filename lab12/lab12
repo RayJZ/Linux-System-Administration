@@ -1,0 +1,5 @@
+nmap -sU -sS -p U:67,123,68,53,111,2049,T:4113,4114,22,80,53,443,111,2049 100.64.11.0/24 10.21.32.2
+
+i have all the .confs on my machine. they are varied and fun.
+
+time: 3hrs

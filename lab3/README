@@ -1,0 +1,8 @@
+Took about 6 hours of sit-down work. Lots of googling and reference.
+This could feasably be a <30min task if I were a seasoned admin.
+
+Handled the group directories and the like on machine E manually, didn't think it was worth making a script.
+
+Also handled giving my user sudoer perms on the debian machines manually—didn't realize debian has wheel disabled by default.
+
+awk is still a bit awkward for me. haven't handled arrays in bash before so that took a second to figure out.

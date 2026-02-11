@@ -1,0 +1,95 @@
+dhcpd.conf:
+
+
+########
+
+
+shared-network dundermifflin {
+  option domain-name "dundermifflin.com";
+  option domain-name-servers 128.138.240.1, 128.138.130.30;
+  option ntp-servers time-a-wwv.nist.gov, time-a-b.nist.gov;
+  default-lease-time 600;
+  max-lease-time 600;
+
+  #DMZ
+  subnet 100.64.11.0 netmask 255.255.255.0 {
+    option routers 100.64.11.1;
+    pool {
+          range 100.64.11.100 100.64.11.199;
+    }
+
+    host machineb {
+      option host-name "dns0.dundermifflin.com";
+      ddns-hostname "dns0.dundermifflin.com";
+      hardware ethernet 00:50:56:85:87:7d;
+      fixed-address 100.64.11.2;
+    }
+
+    host machinec {
+      option host-name "web0.dundermifflin.com";
+      ddns-hostname "web0.dundermifflin.com";
+      hardware ethernet 00:50:56:85:79:e7;
+      fixed-address 100.64.11.3;
+    }
+
+    host machined {
+      option host-name "web1.dundermifflin.com";
+      ddns-hostname "web1.dundermifflin.com";
+      hardware ethernet 00:50:56:85:3f:39;
+      fixed-address 100.64.11.4;
+    }
+
+    host machinef {
+      option host-name "dns1.dundermifflin.com";
+      ddns-hostname "dns1.dundermifflin.com";
+      hardware ethernet 00:50:56:85:e2:6a;
+      fixed-address 100.64.11.6;
+    }
+  }
+
+  #LAN
+  subnet 10.21.32.0 netmask 255.255.255.0 {
+    option routers 10.21.32.1;
+    pool {
+        range 10.21.32.100 10.21.32.199;
+    }
+    host machinee {
+      option host-name "nfs.dundermifflin.com";
+      ddns-hostname "nfs.dundermifflin.com";
+      hardware ethernet 00:50:56:85:6b:00;
+      fixed-address 10.21.32.2;
+    }
+  }
+}
+
+
+
+#########
+
+
+
+Notes:
+Installed dhcp server on machine a.
+configured dhcpd.conf
+started service and rebooted machine a. then started again.
+removed default hostname from /etc/hostname on all machines.
+configured rocky machines.
+
+vi /etc/sysconfig/network-scripts/ifcfg-ens192
+change from static to dhcp
+
+same with debian machines
+
+vi /etc/network/interfaces
+change from static to dhcp
+
+reboot all machines
+check redhat with
+
+nmcli -f DHCP4 con show "$(nmcli -g NAME con show --active)"
+
+check debian with
+ip r
+hostnamectl
+
+Took ~3 hours?

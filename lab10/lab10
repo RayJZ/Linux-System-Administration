@@ -1,0 +1,161 @@
+######################
+
+/etc/named.conf
+
+//
+// named.conf
+//
+// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+// server as a caching only nameserver (as a localhost DNS resolver only).
+//
+// See /usr/share/doc/bind*/sample/ for example named configuration files.
+//
+
+options {
+        listen-on port 53 { 127.0.0.1; 100.64.11.2; };
+        listen-on-v6 port 53 { ::1; };
+        directory       "/var/named";
+        dump-file       "/var/named/data/cache_dump.db";
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+        secroots-file   "/var/named/data/named.secroots";
+        recursing-file  "/var/named/data/named.recursing";
+        allow-query     { localhost; 10.21.32.0/24; 100.64.11.0/24; };
+        allow-recursion { localhost; 10.21.32.0/24; 100.64.11.0/24; };
+
+        /*
+         - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
+         - If you are building a RECURSIVE (caching) DNS server, you need to enable
+           recursion.
+         - If your recursive DNS server has a public IP address, you MUST enable access
+           control to limit queries to your legitimate users. Failing to do so will
+           cause your server to become part of large scale DNS amplification
+           attacks. Implementing BCP38 within your network would greatly
+           reduce such attack surface
+        */
+        recursion yes;
+
+        dnssec-validation yes;
+
+        managed-keys-directory "/var/named/dynamic";
+        geoip-directory "/usr/share/GeoIP";
+
+        pid-file "/run/named/named.pid";
+        session-keyfile "/run/named/session.key";
+
+        /* https://fedoraproject.org/wiki/Changes/CryptoPolicy */
+        include "/etc/crypto-policies/back-ends/bind.config";
+};
+
+logging {
+        channel default_debug {
+                file "data/named.run";
+                severity dynamic;
+        };
+};
+
+zone "." IN {
+        type hint;
+        file "named.ca";
+};
+
+zone "dundermifflin.com" IN {
+        type master;
+        file "dundermifflin.com.zone";
+        allow-query { any; };
+        allow-transfer { none; };
+};
+
+zone "11.64.100.in-addr.arpa" IN {
+        type master;
+        file "11.64.100.in-addr.arpa.zone";
+        allow-query { any; };
+        allow-transfer { none; };
+};
+
+zone "32.21.10.in-addr.arpa" IN {
+        type master;
+        file "32.21.10.in-addr.arpa.zone";
+        allow-query { any; };
+        allow-transfer { none; };
+};
+
+include "/etc/named.rfc1912.zones";
+include "/etc/named.root.key";
+
+######################
+
+/var/named/11.64.100.in-addr.arpa.zone
+
+$TTL 1h
+@ IN SOA dns0.dundermifflin.com. oldo5582.dundermifflin.com. (
+                                2023041501;
+                                1d        ;
+                                1h        ;
+                                7d        ;
+                                1h )      ;
+
+        IN      NS      dns0.dundermifflin.com.
+
+1       IN      PTR     dmz.dundermifflin.com.
+2       IN      PTR     dns0.dundermifflin.com.
+3       IN      PTR     web0.dundermifflin.com.
+4       IN      PTR     web1.dundermifflin.com.
+6       IN      PTR     dns1.dundermifflin.com.
+
+
+######################
+
+/var/named/32.21.10.in-addr.arpa.zone
+
+$TTL 1h
+@ IN SOA dns0.dundermifflin.com. oldo5582.dundermifflin.com. (
+                                2023041501;
+                                1d        ;
+                                1h        ;
+                                7d        ;
+                                1h )      ;
+
+        IN      NS      dns0.dundermifflin.com.
+
+1       IN      PTR     lan.dundermifflin.com.
+2       IN      PTR     nfs.dundermifflin.com.
+
+######################
+
+/var/named/dundermifflin.com.zone
+
+$TTL 1h
+@ IN SOA dns0.dundermifflin.com. oldo5582.dundermifflin.com. (
+                                2023041501;
+                                1d        ;
+                                1h        ;
+                                7d        ;
+                                1h )      ;
+
+                                        IN NS           dns0.dundermifflin.com.
+
+router                                  IN A            100.64.0.11
+dmz                                     IN A            100.64.11.1
+dns0                                    IN A            100.64.11.2
+web0                                    IN A            100.64.11.3
+web1                                    IN A            100.64.11.4
+lan                                     IN A            10.21.32.1
+nfs                                     IN A            10.21.32.2
+dns1                                    IN A            100.64.11.6
+machinea                        7d      IN CNAME        router.dundermifflin.com.
+machineb                        7d      IN CNAME        dns0.dundermifflin.com.
+machinec                        7d      IN CNAME        web0.dundermifflin.com.
+machined                        7d      IN CNAME        web1.dundermifflin.com.
+machinee                        7d      IN CNAME        nfs.dundermifflin.com.
+machinef                        7d      IN CNAME        dns1.dundermifflin.com.
+@                               5m      IN A            100.64.11.3
+www                             5m      IN CNAME        web0.dundermifflin.com.
+www1                            5m      IN CNAME        web1.dundermifflin.com.
+dns                             5m      IN CNAME        dns0.dundermifflin.com.
+files                           7d      IN CNAME        nfs.dundermifflin.com.
+
+
+######################
+
+this took a while. 6-7 hours? pain. not sure I got the recursion right.

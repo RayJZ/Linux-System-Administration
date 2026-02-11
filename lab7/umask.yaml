@@ -1,0 +1,13 @@
+---
+- name: Copy umask
+  hosts: saclass
+  become: true
+  remote_user: oldo5582
+  tasks:
+    - name: do the copying
+      ansible.builtin.copy:
+        src: /etc/profile.d/umask.sh
+        dest: /etc/profile.d/umask.sh
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r

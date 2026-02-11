@@ -1,0 +1,45 @@
+1. On Machined E, create a single Linux LVM partition on each of the new drives.
+
+> sudo fdisk /dev/sdb
+> n
+> p
+> default partition number
+> default first sector
+> default last sector
+> t
+> 8e (Linux LVM)
+> w (write)
+
+2. Create a volume group named savg that uses all the newly added storage.
+
+> sudo vgcreate savg /dev/sdb1
+
+3. Create a logical volume tmp that is 1GB in size and create an ext4 file system on it.
+
+> sudo lvcreate -n tmp -L 1G savg
+(-n name, -L size)
+> sudo mkfs.ext4 /dev/savg/temp
+
+4. Create a logical volume home that fills 80% of the remainder of the newly added storage and create an xfs file system on it.
+
+> sudo lvcreate -n home -l 80%FREE savg
+> sudo mkfs.xfs /dev/savg/home
+
+5. Permanently add the new /tmp and /home filesystems to the root file system.  Use the nodev, nosuid and noexec mount options for /tmp and the nodev mount option for /home.
+
+> mkdir /mnt/temp
+> mkdir /mnt/home
+> vi /etc/fstab
+append lines
+/dev/savg/tmp           /mnt/tmp                ext4    defaults,nodev,nosuid,noexec    0 0
+/dev/savg/home          /mnt/home               xfs     defaults,nodev  0 0
+> mount -a (mounts all filesystems in fstab)
+
+6. Implement quotas on /home to limit the amount of storage that any Dunder-Mifflin employee may use to a soft limit of 1000MB, a hard limit of 1200MB and a grace period of 1 day.  Apply the same limits to the managers, accounting and sales groups.
+
+I did not do this :O
+
+README:
+
+Didn't take too long, actually. Less than an hour. I imagine it would have taken substantially longer if I were a
+grad student and had to fiddle with RAID. Or if I had done the EC.
